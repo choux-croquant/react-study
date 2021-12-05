@@ -1,0 +1,89 @@
+{
+  "days": [
+    {
+      "id": 1,
+      "day": 1
+    },
+    {
+      "id": 2,
+      "day": 2
+    },
+    {
+      "id": 3,
+      "day": 3
+    },
+    {
+      "day": 4,
+      "id": 4
+    },
+    {
+      "day": 5,
+      "id": 5
+    }
+  ],
+  "words": [
+    {
+      "id": 1,
+      "day": 1,
+      "eng": "book",
+      "kor": "책",
+      "isDone": false
+    },
+    {
+      "id": 3,
+      "day": 2,
+      "eng": "car",
+      "kor": "자동차",
+      "isDone": false
+    },
+    {
+      "id": 5,
+      "day": 3,
+      "eng": "school",
+      "kor": "학교",
+      "isDone": false
+    },
+    {
+      "id": 6,
+      "day": 3,
+      "eng": "pencil",
+      "kor": "연필",
+      "isDone": false
+    },
+    {
+      "day": "1",
+      "eng": "cookie",
+      "kor": "쿠키",
+      "isDone": false,
+      "id": 7
+    },
+    {
+      "day": "2",
+      "eng": "princess",
+      "kor": "공주",
+      "isDone": false,
+      "id": 8
+    },
+    {
+      "day": "3",
+      "eng": "knight",
+      "kor": "기사",
+      "isDone": false,
+      "id": 9
+    },
+    {
+      "day": "1",
+      "eng": "jungle",
+      "kor": "정글",
+      "isDone": false,
+      "id": 10
+    },
+    {
+      "day": "1",
+      "eng": "chocolate",
+      "kor": "초콜릿",
+      "isDone": false,
+      "id": 11
+    }
+  ]
+}
