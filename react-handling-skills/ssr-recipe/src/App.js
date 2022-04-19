@@ -1,20 +1,18 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Menu from "./components/Menu";
-import RedPage from "./pages/RedPages";
-import BluePage from "./pages/BluePages";
+import React from 'react';
+import { Route } from 'react-router-dom';
+import Menu from './components/Menu';
+import RedPage from './pages/RedPage';
+import BluePage from './pages/BluePage';
 
-const App = () => {
+function App() {
   return (
     <div>
       <Menu />
       <hr />
-      <Routes>
-        <Route path="/red" element={<RedPage />}/>
-        <Route path="/blue" element={<BluePage />}/>
-      </Routes>
+      <Route path="/red" component={RedPage} />
+      <Route path="/blue" component={BluePage} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
