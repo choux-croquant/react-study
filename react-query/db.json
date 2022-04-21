@@ -1,0 +1,42 @@
+{
+  "itemList": [
+    {
+      "id": 1,
+      "itemName": "someitem1",
+      "itemPrice": "1000"
+    },
+    {
+      "id": 1,
+      "itemName": "someitem2",
+      "itemPrice": "2000"
+    },
+    {
+      "id": 1,
+      "itemName": "someitem3",
+      "itemPrice": "3000"
+    }
+  ],
+
+  "wishItemList": [
+    {
+      "id": 1,
+      "itemName": "someitem4",
+      "itemPrice": "4000",
+      "totalLikes": "4"
+    },
+    {
+      "id": 1,
+      "itemName": "someitem5",
+      "itemPrice": "5000",
+      "totalLikes": "25"
+
+    },
+    {
+      "id": 1,
+      "itemName": "someitem6",
+      "itemPrice": "6000",
+      "totalLikes": "98"
+
+    }
+  ]
+}
