@@ -30,10 +30,9 @@ function App() {
 QueryKey, fetch함수, 옵션을 인자로 받는 훅. 쿼리 키를 기준으로 캐싱 등을 관리한다. 즉 다른 쿼리 키를 부여하면 각각 적절한 캐싱 옵션을 줄 수 있다.
 useQuery훅에 비동기 요청을 서버로 보내는 함수를 인자로 전달하면 요청의 결과와 함께 유용한 state들이 포함된 객체를 받을 수 있다.
 
-useQueries는 여러 개의 쿼리를 fetch해야할 경우 useQuery를 묶어서 사용하는 개념.
-
 + useQuery결과값 객체의 state예시
   + data : fetch의 결과 데이터
+  + error : fetch함수 실패 시의 에러 객체
   + isLoading : 현재 데이터가 없고 fetch를 진행중이면 true를 반환하는 state
   + isError : 쿼리에 에러가 발생한 경우 true를 반환하는 state
   + isSuccess : 쿼리가 성공적으로 들어오고, data가 사용가능할 때 true를 반환하는 state
@@ -61,3 +60,19 @@ function Todos() {
    )
  }
  ```
+옵션에는 다양한 속성이 존재하며, 속성을 부여하여 캐싱되는 시간, refetch하는 간격, 요청을 재시도하는 간격(polling구현 용이) 등 다양한 요소를 변경할 수 있다.
+
+useQueries는 여러 개의 쿼리를 fetch해야할 경우 useQuery를 묶어서 사용하는 개념. 반복되는 쿼리들을 parallel하게 실행하려면 이 훅을 사용하는 것이 권장됨
+```
+function App({ users }) {
+   const userQueries = useQueries(
+     users.map(user => {
+       return {
+         queryKey: ['user', user.id],
+         queryFn: () => fetchUserById(user.id),
+       }
+     })
+   )
+ }
+```
+

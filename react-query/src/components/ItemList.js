@@ -2,9 +2,19 @@ import { useQuery } from "react-query";
 import styles from './ItemList.module.css'
 
 const ItemList = () => {
-  const { isLoading, isError, error, data } = useQuery('itemList', async () => {
-    return await fetch('http://localhost:4000/itemList1').then(res => res.json())
+  const { isLoading, isFetching, isError, error, refetch, data } = useQuery('itemList', async () => {
+    const response = await fetch('http://localhost:4000/itemList')
+
+    if (!response.ok) {
+      throw new Error(error)
+    }
+    return response.json
+  }, {
+    cacheTime: 50000,
+    staleTime: 500000,
   })
+
+  console.log(isLoading, isFetching)
 
   if (isLoading) {
     return <p>Now Loading...</p>
@@ -17,6 +27,8 @@ const ItemList = () => {
   return (
     <>
       <p>Item List</p>
+      {/* manually refetch data */}
+      <button onClick={refetch}>Refetch!</button>
       {data?.map((item) => {
         return(
           <div className={styles.itemContainer}>
