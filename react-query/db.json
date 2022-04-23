@@ -24,6 +24,16 @@
       "itemName": "newitem2",
       "itemPrice": "2345",
       "id": 3
+    },
+    {
+      "itemName": "newItem3",
+      "itemPrice": "4567",
+      "id": 4
+    },
+    {
+      "itemName": "newItem4",
+      "itemPrice": "6789",
+      "id": 5
     }
   ],
   "wishItemList": [

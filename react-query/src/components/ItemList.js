@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import styles from './ItemList.module.css'
 import useWishItemListData from "../hooks/useWishItemListData";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import axios from "axios";
 const ItemList = () => {
   const [itemName, setItemName] = useState('')
   const [itemPrice, setItemPrice] = useState('')
+  const queryClient = useQueryClient()
   const { isLoading, isFetching, isError, error, refetch, data } = useQuery('itemList', async () => {
     const response = await fetch('http://localhost:4000/itemList')
 
@@ -22,6 +23,10 @@ const ItemList = () => {
   // useMutation Example
   const itemMutation = useMutation(newItem => {
     return axios.post('http://localhost:4000/itemList', newItem)
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('itemList')
+    },
   })
 
   const wishItemdata = useWishItemListData().data

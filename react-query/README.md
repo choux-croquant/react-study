@@ -107,6 +107,7 @@ React Query의 초기 데이터 설정에는 크게 두 가지 방법이 존재
 
 ### useMutation
 서버에 대한 조작작업(CUD)를 실행할 경우 사용할 수 있는 훅, 요청을 보내면서 발생하는 side-effect를 관리하기 용이하다. 아래와 같이 mutation을 정의하고 사용할 수 있다.
+내장메서드 mutate는 비동기 함수이므로 이벤트에 할당할 경우 onSubmit={mutation.mutate}와 같이 바로 할당하지 않도록 주의.(React16 이전 버전)
 ```
 const itemMutation = useMutation(newItem => {
     return axios.post('http://localhost:4000/itemList', newItem)
@@ -120,3 +121,59 @@ const addItemHandler = () => {
   }
 ```
 useQuery훅과 마찬가지로 요청이 진행중인지, 에러가 발생했는지 등의 여부를 isLoading, isError state등으로 간단하게 활용할 수 있다.
+reset메서드로 요청 실패 시 mutation을 초기화하거나 onMutate, onError등의 옵션을 추가하여 mutation의 특정 상황에서 함수가 호출되도록 작성할 수 있다.
+
+### Query Invalidation
+리스트 등에 mutation등의 작업을 통해 server-state가 변경된 경우 현재 화면에 나타나고 있는 쿼리데이터는 최신 상태를 반영하지 않을 수 있다. 이럴 경우 queryClient.invalidateQueries()를 통해 인위적으로 특정 쿼리를 유효하지 않은 상태로 바꾸고 refetch할 수 있다. invalidate시 useQuery에 존재하는 staleTime옵션을 오버라이드하게 된다.
+```
+// invalidateQueries()에 인자로 넣은 key값은 옵션을 통해 exact matching하거나 key가 포함된 모든 쿼리를 invalidate하게 만들 수 있다.
+
+// Only exact todos query will be invalidated
+queryClient.invalidateQueries('todos', { exact: true })
+const todoListQuery = useQuery('todos', fetchTodoList)
+const todoListQuery = useQuery(['todos', { page: 1 }], fetchTodoList)
+
+// Both queries below will be invalidated
+queryClient.invalidateQueries('todos')
+const todoListQuery = useQuery('todos', fetchTodoList)
+const todoListQuery = useQuery(['todos', { page: 1 }], fetchTodoList)
+```
+
+이런 방식으로 작성할 경우 mutate가 성공할 때 쿼리를 최신상태로 갱신하도록 할 수 있다.
+```
+const itemMutation = useMutation(newItem => {
+    return axios.post('http://localhost:4000/itemList', newItem)
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('itemList')
+    },
+})
+```
+
+### Optimistic Update를 통해 안정적으로 Mutation하기
+mutation을 실행 시 정상적으로 동작하여 올바른 값을 가져올지 중간에 에러가 발생할지 항상 정확하게 알 수는 없기 때문에 안정적으로 서비스를 구축하기 위해서는 예외 상황에 잘 대비할 필요가 있다. useMutation내부에서 onMutate, onError, onSettled등을 통해 이전 상태의 snapshot을 만들어 데이터가 비는 상황 등을 대비할 수 있다.
+```
+useMutation(updateTodo, {
+   // When mutate is called:
+   onMutate: async newTodo => {
+     // mutation중에 일어날 수 있는 쿼리 refetch등을 방지
+     await queryClient.cancelQueries('todos')
+
+     // 이전 상태에 대한 스냅샷 저장
+     const previousTodos = queryClient.getQueryData('todos')
+
+     // 새로운 값을 concat하여 쿼리 세팅
+     queryClient.setQueryData('todos', old => [...old, newTodo])
+
+     // 스냅샷된 데이터와 함께 context객체 반환
+     return { previousTodos }
+   },
+   // mutation중 에러 발생 시 이전 상태의 스냅샷으로 쿼리를 세팅하여 롤백
+   onError: (err, newTodo, context) => {
+     queryClient.setQueryData('todos', context.previousTodos)
+   },
+   // mutation성공 시 invalidate query -> 자동 refetch를 통해 업데이트 된 값으로 갱신
+   onSettled: () => {
+     queryClient.invalidateQueries('todos')
+   },
+})
