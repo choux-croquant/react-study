@@ -76,3 +76,47 @@ function App({ users }) {
  }
 ```
 
+### Initial Query Data
+특정 페이지 등에서 Initial data를 설정하여 loading state를 안보이도록 만들어 UX를 향상시키는 데 활용할 수 있다.
+React Query의 초기 데이터 설정에는 크게 두 가지 방법이 존재
++ 선언형 방법 : useQuery의 옵션에 initialData를 설정하는 것으로 구현, 함수를 할당할 수 있고 queryClient를 활용하여 특정 쿼리key에 해당하는 데이터를 가공하여 사용할 수도 있다.
+옵션을 통해 주기적으로 초기 데이터를 최신 상태로 유지할 수 있으며 마지막 업데이트 시간을 확인할 수 있다.
+  ```
+  // 기본적 방법
+  function Todos() {
+   const result = useQuery('todos', () => fetch('/todos'), {
+     initialData: initialTodos,
+     staleTime: 60 * 1000,
+     initialDataUpdatedAt: initialTodosUpdatedTimestamp
+   })
+  }
+  ```
+
++ 명령형 방법 : queryClient.prefetchQuery를 사용하여 prefetch하는 방법, queryClient.prefetchQuery를 사용하여 직접 데이터를 캐싱하는 방법
+  ```
+  // useQuery와 유사한 형식으로 prefetch가능,
+  const prefetchTodos = async () => {
+   // The results of this query will be cached like a normal query
+   await queryClient.prefetchQuery('todos', fetchTodos)
+  }
+  ```
+  다음과 같이 미리 준비된 데이터를 특정 쿼리키를 가지는 쿼리에 할당할 수도 있다.
+  ```
+  queryClient.setQueryData('todos', todos)
+  ```
+
+### useMutation
+서버에 대한 조작작업(CUD)를 실행할 경우 사용할 수 있는 훅, 요청을 보내면서 발생하는 side-effect를 관리하기 용이하다. 아래와 같이 mutation을 정의하고 사용할 수 있다.
+```
+const itemMutation = useMutation(newItem => {
+    return axios.post('http://localhost:4000/itemList', newItem)
+})
+
+// 내장된 mutate메서드를 호출하여 실제로 요청을 실행
+const addItemHandler = () => {
+    console.log(itemName, itemPrice)
+    const newItem = { itemName, itemPrice }
+    itemMutation.mutate(newItem)
+  }
+```
+useQuery훅과 마찬가지로 요청이 진행중인지, 에러가 발생했는지 등의 여부를 isLoading, isError state등으로 간단하게 활용할 수 있다.
